@@ -4,7 +4,7 @@
  ### install some packages
     npm install cassandra-driver
   
- ### main.js
+ ## main.js
     var express = require('express');
     const cors = require('cors');
     const port  = process.env.PORT || 5000;
@@ -16,9 +16,11 @@
     app.use('/users', usersRouter);
     app.listen(port, () => console.log('server started on port '+port));
     
-### users.js
+## users.js
+
     const router = require('express').Router();
     const cassandra = require('cassandra-driver')
+### connect to cassandra
     var client = new cassandra.Client({ contactPoints: ['127.0.0.1'] , localDataCenter: 'dc1'})
  
     client.connect((err, result) => {
@@ -29,7 +31,7 @@
 
       }
     })
-
+### select query to users route 
     var getAllSubscribers = 'select * from people.student ';
 
     router.route('/').get((req, res) => {
@@ -44,6 +46,7 @@
             }
         });
     });
+### inserting data to database 
       router.route('/addUser').post((req, res) => {
           const  insertQuery = "INSERT INTO people.student (id, name,father) VALUES(now(),?,?)";
       const params = [req.body.name,req.body.father];
@@ -53,6 +56,7 @@
 
 
       })
+### deleting data from database
       router.route('/removeUser').delete((req, res) => {
           const deleteQuery = "DELETE FROM people.student WHERE id = ?"
           const params = [req.body.id]
@@ -63,6 +67,7 @@
 
           })
       })
+### finally we have to export to router
       module.exports = router;
 
 
